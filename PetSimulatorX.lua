@@ -280,9 +280,29 @@ spawn(function()
 end)
 
 
-
+function Notification()
+local notif = game:GetService("Players").LocalPlayer.PlayerGui
+if game:GetService("Players").LocalPlayer.PlayerGui.Main.Bottom.Inventory.Notification.Count.text > "998" then do
+    game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Enabled = true
+    task.wait(1)
+    game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Enabled = false
+end
+end
+end
 ToggleSettings:Toggle("Start Farming",function(State)
 	FarmingEnabled = State
+end)
+ToggleSettings:Toggle("Disable Notifications", function(State)
+	Notification = State
+end)
+spawn(function()
+	while true do wait()
+		if Notification then
+			Notification()
+		end
+			
+	end
+		
 end)
 ToggleSettings:Slider("Wait Time", 1, 10, function(Values)
     WaitTime = Values
