@@ -280,15 +280,7 @@ spawn(function()
 end)
 
 
-function Notification()
-local notif = game:GetService("Players").LocalPlayer.PlayerGui
-if game:GetService("Players").LocalPlayer.PlayerGui.Main.Bottom.Inventory.Notification.Count.text > "998" then do
-    game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Enabled = true
-    task.wait(1)
-    game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Enabled = false
-end
-end
-end
+
 ToggleSettings:Toggle("Start Farming",function(State)
 	FarmingEnabled = State
 end)
@@ -298,9 +290,14 @@ end)
 spawn(function()
 	while true do wait()
 		if Notification then
-			Notification()
+            local notif = game:GetService("Players").LocalPlayer.PlayerGui
+                if notif.Main.Bottom.Inventory.Notification.Count.text > "998" then
+                    notif.Inventory.Enabled = true
+                    task.wait(1)
+                    notif.Inventory.Enabled = false
+                end
 		end
-			
+
 	end
 		
 end)
