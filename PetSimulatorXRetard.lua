@@ -742,7 +742,7 @@ Callback = function(Vals)
 end
 }
 spawn(function()
-game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = false
+game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
 if getgenv().settings.autoFarming.orbs then
     --Disable Script
     game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
@@ -758,7 +758,7 @@ if getgenv().settings.autoFarming.orbs then
         end
     end
 else
-    game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = false
+    game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
 end
 end)
 --Send All Pets
@@ -967,7 +967,7 @@ Callback = function(Vals)
 end
 }
 spawn(function()
-game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = false
+    game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
 if getgenv().settings.autoFarming.orbs then
     --Disable Script
     game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
@@ -983,7 +983,7 @@ if getgenv().settings.autoFarming.orbs then
         end
     end
 else
-    game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = false
+    game:GetService("Players").LocalPlayer.PlayerScripts.Scripts.Game.Orbs.Disabled = true
 end
 end)
 --Send All Pets
