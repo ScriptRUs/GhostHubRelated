@@ -25,6 +25,11 @@ local Notify = getsenv(game:GetService("Players").LocalPlayer:WaitForChild("Play
 
 Connections = {}
 
+local GameLibrary = require(game:GetService("ReplicatedStorage"):WaitForChild("Framework"):WaitForChild("Library"))
+local Network = GameLibrary.Network
+local Run_Service = game:GetService("RunService")
+local rs = Run_Service.RenderStepped
+        local CurrencyOrder = {"Rainbow Coins", "Tech Coins", "Fantasy Coins", "Coins"}
 --Settings
 getgenv().settings = {
 saveVersion = saveFileVer,
@@ -58,9 +63,9 @@ game = {
     autoDepo = false
 },
 autoEggs = {
-    selectedEggs = {},
-    trippleHatch = false,
-    skipAnimation = false
+    OpenEggs = false,
+    Triple = false,
+    selectedEggs = {}
 },
 machines = {
     goldAmount = 6,
@@ -137,8 +142,8 @@ end
 
 local function loadSettings()
 if(isfile and readfile) then
-    if(isfile("PSX.json")) then
-        data = HttpService:JSONDecode(readfile("PSX.json"))
+    if(isfile("GhostHubBeta.json")) then
+        data = HttpService:JSONDecode(readfile("GhostHubBeta.json"))
         recurseTable(data)
         Lib.Signal.Fire("Notification", "Loaded Data From Save File", {
             color = Color3.fromRGB(104, 244, 104)
@@ -161,16 +166,13 @@ end
 
 local function saveSettings()
 if(writefile and isfile) then
-    writefile("PSX.json", (HttpService:JSONEncode(getgenv().settings)))
-    Lib.Signal.Fire("Notification", "Successfully Saved Data", {
-        color = Color3.fromRGB(104, 244, 104)
-    })
+    writefile("GhostHubBeta.json", (HttpService:JSONEncode(getgenv().settings))) 
 end
 end
 
 local function deleteSettings()
 if(isfile and delfile) then
-    if(isfile("PSX.json")) then
+    if(isfile("GhostHubBeta.json")) then
         delfile("PSX.json")
         Lib.Signal.Fire("Notification", "Successfully Deleted Save File", {
             color = Color3.fromRGB(104, 244, 104)
@@ -298,6 +300,8 @@ end
 return coinData
 end
 
+
+workspace.__THINGS.__REMOTES.MAIN:FireServer("b", "buy egg")
 local allAreas = {}
 --Update Areas Array
 function getAreas()
@@ -344,7 +348,6 @@ while wait(math.random(3,5)) do
     end
 end
 end)
-
 --Send Pet Function
 function sendPet(coinID, petID)
 Lib.Network.Fire("change pet target", petID, "Coin", coinID)
@@ -409,11 +412,11 @@ Buttons = {
         FarmerVer()
     end,
     FullVer = function()
-        FullVer()
+        MainVers()
     end
 }
 }
-function FullVer()
+function MainVers()
 local GUI = Mercury:Create{
     Name = "Mercury",
     Size = UDim2.fromOffset(800, 500),
@@ -432,10 +435,12 @@ local Areas = GUI:Tab{
     Name = "Select Areas",
     Icon = "rbxassetid://6035078913"
 }
-local Pets = GUI:Tab{
+local Eggs = GUI:Tab{
     Name = "Pets",
     Icon = "rbxassetid://6034470803"
 }
+
+
 Essentials:Button{
     Name = "--Merchant Section--",
     Callback = function()
@@ -817,7 +822,88 @@ for i,v in ipairs(allAreas) do
     }
     end
 end
+
+    Eggs:Button{
+        Name = "-- Hatching Section --"
+    }
+
+
+local MyEggData = {}
+local littleuselesstable = {}
+local GameLibrary = require(game:GetService("ReplicatedStorage"):WaitForChild("Framework"):WaitForChild("Library"))
+for i,v in pairs(GameLibrary.Directory.Eggs) do
+    local temptable = {}
+    temptable['Name'] = i
+    temptable['Currency'] = v.currency
+    temptable['Price'] = v.cost
+    table.insert(MyEggData, temptable)
 end
+
+table.sort(MyEggData, function(a, b)
+    return a.Price < b.Price
+end)
+
+local EggData = {}
+for i,v in pairs(CurrencyOrder) do
+    table.insert(EggData, " ")
+    table.insert(EggData, "-- "..v.." --")
+    for a,b in pairs(MyEggData) do
+        if b.Currency == v then
+            table.insert(EggData, b.Name)
+        end
+    end
+end
+Eggs:Toggle{
+    Name = "Open Eggs",
+    StartingState = getgenv().settings.autoEggs.OpenEggs,
+    Callback = function(Vals)
+        getgenv().settings.autoEggs.OpenEggs = Vals
+    end
+}
+spawn(function()
+	while true do wait()
+		if getgenv().settings.autoEggs.OpenEggs then
+        local ohTable1 = {
+            [1] = getgenv().settings.autoEggs.selectedEggs,
+            [2] = getgenv().settings.autoEggs.Triple
+        }
+        workspace.__THINGS.__REMOTES["buy egg"]:InvokeServer(ohTable1)
+        wait (0.5)
+	end
+end
+end)
+Eggs:Toggle{
+    Name = "Triple - Requires Gp",
+    StartingState = getgenv().settings.autoEggs.Triple,
+    Callback = function(Vals)
+        getgenv().settings.autoEggs.Triple = Vals
+    end
+}
+Eggs:Textbox{
+	Name = "Textbox",
+	Callback = function(text)
+		getgenv().settings.autoEggs.selectedEggs = text
+	end	
+}
+Eggs:Button{
+	Name = " To Get Goldens, Put Golden In Front Of The Egg Name "
+}
+
+Eggs:Button{
+    Name = "Remove Egg Animation",
+    Callback = function()
+        for i,v in pairs(getgc(true)) do
+            if (typeof(v) == 'table' and rawget(v, 'OpenEgg')) then
+                v.OpenEgg = function()
+                    return
+                end
+            end
+        end
+    end
+}
+
+
+    end
 function FarmerVer()
 
 local GUI = Mercury:Create{
@@ -962,4 +1048,3 @@ for i,v in ipairs(allAreas) do
     end
 end
 end
-
